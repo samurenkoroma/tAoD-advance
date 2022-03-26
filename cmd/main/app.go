@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"net"
@@ -10,6 +11,8 @@ import (
 	"path/filepath"
 	"tAoD-advance/internal/config"
 	"tAoD-advance/internal/user"
+	"tAoD-advance/internal/user/db"
+	"tAoD-advance/pkg/client/mongodb"
 	"tAoD-advance/pkg/logging"
 	"time"
 )
@@ -20,6 +23,15 @@ func main() {
 	router := httprouter.New()
 
 	cfg := config.GetConfig()
+	cfgDB := cfg.MongoDB
+	mongoDBClient, err := mongodb.NewClient(context.Background(), cfgDB.Host, cfgDB.Port, cfgDB.Username, cfgDB.Password, cfgDB.Database, cfgDB.AuthDB)
+	if err != nil {
+		panic(err)
+	}
+	storage := db.NewStorage(mongoDBClient, cfg.MongoDB.Collection, logger)
+
+	users, err := storage.FindAll(context.Background())
+	fmt.Println(users)
 	user.NewHandler(logger).Register(router)
 	start(router, cfg)
 

@@ -4,3 +4,11 @@ listen:
   type: sock
   bind_ip: 0.0.0.0
   port: 10000
+mongo_db:
+  host: localhost
+  port: 27017
+  database: user_service
+  auth_db:
+  username:
+  password:
+  collection: users

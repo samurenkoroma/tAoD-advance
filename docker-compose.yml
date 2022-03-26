@@ -1,0 +1,14 @@
+version: "3"
+
+volumes:
+  db:
+
+services:
+  taod-db:
+    container_name: taod-db
+    restart: unless-stopped
+    image: mongo:5.0.6
+    ports:
+      - "27017:27017"
+    volumes:
+      - db:/data/db
