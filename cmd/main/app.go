@@ -2,22 +2,24 @@ package main
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"log"
 	"net"
 	"net/http"
 	"tAoD-advance/internal/user"
+	"tAoD-advance/pkg/logging"
 	"time"
 )
 
 func main() {
-	log.Printf("create router")
+	logger := logging.GetLogger()
+	logger.Tracef("create router")
 	router := httprouter.New()
-	user.NewHandler().Register(router)
+	user.NewHandler(logger).Register(router)
 	start(router)
 
 }
 
 func start(router *httprouter.Router) {
+	logger := logging.GetLogger()
 	listener, err := net.Listen("tcp", "127.0.0.1:1234")
 	if err != nil {
 		panic(err)
@@ -26,6 +28,6 @@ func start(router *httprouter.Router) {
 		Handler:      router,
 		WriteTimeout: 15 * time.Second,
 	}
-	log.Printf("run server")
-	log.Fatal(server.Serve(listener))
+	logger.Printf("run server")
+	logger.Fatal(server.Serve(listener))
 }
